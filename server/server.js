@@ -111,7 +111,25 @@ app.delete("/api/tasks/:id", async (req, res) => {
 
 // TODO: Add your Session routes here
 // POST /api/sessions
+app.post("/api/sessions", async (req, res) => {
+  try {
+    const newSession = new Session(req.body); // creates the new session
+    const savedSession = await newSession.save(); // saves the session to db
+    res.status(201).json(savedSession); // sends back the session
+  } catch (error) {
+    res.status(400).json({message: error.message}); // handles errors
+  }
+});
+
 // GET /api/sessions
+app.get("/api/sessions", async (req, res) => {
+  try {
+    const sessions = await Session.find().populate('taskId');
+    res.json(sessions);
+  } catch (error) {
+    res.status(500).json({message: error.message});
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
