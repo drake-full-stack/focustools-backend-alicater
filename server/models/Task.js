@@ -1,11 +1,17 @@
 const mongoose = require("mongoose");
 
 // TODO: Define your Task schema here
-const taskSchema = new mongoose.Schema(
-  {
-    // TODO: Add title field (String, required, trim)
-    // TODO: Add completed field (Boolean, default false)
+const taskSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+    trim: true
   },
+  completed: {
+    type: Boolean,
+    default: false
+  }
+},
   {
     timestamps: true,
   }

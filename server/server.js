@@ -31,11 +31,83 @@ app.get("/", (req, res) => {
 });
 
 // TODO: Add your Task routes here
-// POST /api/tasks
-// GET /api/tasks
-// GET /api/tasks/:id
-// PUT /api/tasks/:id
-// DELETE /api/tasks/:id
+// POST /api/tasks -- create task
+app.post("/api/tasks", async(req, res) => {
+  try {
+    const task = new Task(req.body);
+    const savedTask = await task.save();
+    res.status(201).json(savedTask);
+  } catch (error) {
+    res.status(400).json({message: error.message});
+  }
+});
+
+// GET /api/tasks -- return all tasks
+app.get("/api/tasks", async (req, res)=> {
+  try {
+    const tasks = await Task.find();
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({message: error.message});
+  }
+});
+
+// GET /api/tasks/:id -- return specific task
+app.get("/api/tasks/:id", async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+
+    if (!task) {
+      return res.status(404).json({
+        message: "Task Not Found",
+      });
+    }
+    res.json(task);
+  } catch (error) {
+    res.status(500).json({message: error.message});
+  }
+});
+
+// PUT /api/tasks/:id -- modify specific task
+app.put("/api/tasks/:id", async (req, res) => {
+  try {
+    const updatedTask = await Task.findByIdAndUpdate(
+      req.params.id, // specifies which task to update
+      req.body, // the new data
+      {
+        new: true, // returns updates version
+        runValidators: true // checks schema rules
+      }
+    );
+    if (!updatedTask) {
+      return res.status(404).json({
+        message: "Task Not Found",
+      });
+    }
+    res.json(updatedTask);
+  } catch (error) {
+    res.status(400).json({message: error.message});
+  }
+});
+
+// DELETE /api/tasks/:id -- delete specific task
+app.delete("/api/tasks/:id", async (req, res) => {
+  try {
+    const deletedTask = await Task.findByIdAndDelete(req.params.id);
+
+    if (!deletedTask) {
+      return res.status(404).json({
+        message: "Task Not Found",
+      });
+    }
+    res.json({
+      message: "Task deleted successfully!",
+      task: deletedTask,
+    });
+  } catch (error) {
+    res.status(500).json({message: error.message});
+  }
+})
 
 // TODO: Add your Session routes here
 // POST /api/sessions
